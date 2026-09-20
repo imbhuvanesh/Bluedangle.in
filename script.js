@@ -31,12 +31,6 @@
 
   const DL_KEY = "blue-dangle-downloads";
 
-  function unlockDownload() {
-    if (!downloadBtnEl) return;
-    downloadBtnEl.textContent = "Download Blue Dangle";
-    document.body.classList.add("unlocked");
-  }
-
   function renderDownloadCount() {
     if (!downloadCountEl) return;
     const n = parseInt(localStorage.getItem(DL_KEY) || "0", 10);
@@ -46,9 +40,6 @@
   function bindDownload() {
     if (!downloadBtnEl) return;
     downloadBtnEl.addEventListener("click", () => {
-      if (!document.body.classList.contains("unlocked")) {
-        unlockDownload();
-      }
       const n = parseInt(localStorage.getItem(DL_KEY) || "0", 10) + 1;
       localStorage.setItem(DL_KEY, String(n));
       renderDownloadCount();
