@@ -13,16 +13,8 @@
 
   <canvas id="scene" aria-label="Blue Dangle hanging from the top of your screen. Grab it, drag it, flick it."></canvas>
 
-  <div class="hint" id="hint">
-    <span class="hint-dot"></span>
-    grab the dangle
-  </div>
-
-  <div class="actions" id="actions" data-valid="false">
-    <div class="actions-row">
-      <button class="btn-pay" id="payBtn" type="button">💙 Pay ₹1 · Unlock</button>
-      <a class="btn-download" id="downloadBtn" href="https://www.mediafire.com/file/kd3iomwy4ohb0qm/Blue-Dangle-Setup-1.0.0.exe/file" target="_blank" rel="noopener" aria-disabled="true" tabindex="-1">🔒 Locked</a>
-    </div>
+  <div class="actions" id="actions">
+    <a class="btn-download" id="downloadBtn" href="https://www.mediafire.com/file/kd3iomwy4ohb0qm/Blue-Dangle-Setup-1.0.0.exe/file" target="_blank" rel="noopener">Unlock for ₹55</a>
     <p class="download-count" id="downloadCount">Downloads: 0</p>
   </div>
 
@@ -33,23 +25,7 @@
   </main>
 
   <div class="preloader" id="preloader" role="presentation">
-    <div class="preloader-inner">
-      <div class="preloader-mark">
-        <svg viewBox="0 0 48 48" aria-hidden="true">
-          <circle cx="24" cy="7" r="4" fill="none" stroke="#cfe3ff" stroke-width="3" class="pre-ring"/>
-          <path d="M24 9c4.5 6 9.6 9.6 9.6 16.4A9.6 9.6 0 1 1 14.4 25.4C14.4 18.6 19.5 15 24 9Z" fill="url(#pg)" class="pre-body"/>
-          <defs>
-            <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="%237fb1ff"/>
-              <stop offset="1" stop-color="%231b3fd0"/>
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
-      <div class="preloader-title">Blue Dangle</div>
-      <div class="preloader-bar"><span></span></div>
-      <div class="preloader-quote" id="preloaderQuote">Stay good, stay lucky</div>
-    </div>
+    <img src="one.png" alt="Blue Dangle" class="preloader-logo" />
   </div>
 
   <script src="script.js"></script>

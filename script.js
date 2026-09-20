@@ -23,48 +23,18 @@
   let time = 0;
   let last = 0;
   let rafId = 0;
+  let jiggleFor = 0;
 
-  const hintEl = document.getElementById("hint");
   const actionsEl = document.getElementById("actions");
   const downloadBtnEl = document.getElementById("downloadBtn");
   const downloadCountEl = document.getElementById("downloadCount");
 
-  const QUOTES = [
-    "Stay good, stay lucky",
-    "Protect your light, keep the dark away",
-    "Good vibes only in",
-    "Stay blessed, stay protected",
-    "Mann shant, future bright",
-    "Keep evil out, keep goodness in",
-  ];
-  const quoteEl = document.getElementById("preloaderQuote");
-
   const DL_KEY = "blue-dangle-downloads";
-
-  const RAZORPAY_LINK = "https://rzp.io/rzp/R95Yg8mW";
-  const payBtn = document.getElementById("payBtn");
 
   function unlockDownload() {
     if (!downloadBtnEl) return;
-    actionsEl.dataset.valid = "true";
-    downloadBtnEl.textContent = "📥 Download Blue Dangle";
-    downloadBtnEl.removeAttribute("aria-disabled");
-    downloadBtnEl.removeAttribute("tabindex");
-    if (payBtn) payBtn.remove();
+    downloadBtnEl.textContent = "Download Blue Dangle";
     document.body.classList.add("unlocked");
-  }
-
-  function checkReturnStatus() {
-    const params = new URLSearchParams(window.location.search);
-    const status = params.get("razorpay_payment_link_status");
-    return status === "paid";
-  }
-
-  function bindPay() {
-    if (!payBtn) return;
-    payBtn.addEventListener("click", () => {
-      window.location.href = RAZORPAY_LINK;
-    });
   }
 
   function renderDownloadCount() {
@@ -75,10 +45,9 @@
 
   function bindDownload() {
     if (!downloadBtnEl) return;
-    downloadBtnEl.addEventListener("click", (e) => {
-      if (actionsEl.dataset.valid !== "true") {
-        e.preventDefault();
-        return;
+    downloadBtnEl.addEventListener("click", () => {
+      if (!document.body.classList.contains("unlocked")) {
+        unlockDownload();
       }
       const n = parseInt(localStorage.getItem(DL_KEY) || "0", 10) + 1;
       localStorage.setItem(DL_KEY, String(n));
@@ -125,7 +94,6 @@
     radius = clamp(Math.min(w, h) * 0.05, 15, 38);
 
     syncBobToRest();
-    positionHint();
     positionActions();
   }
 
@@ -140,14 +108,6 @@
     bob.vy = 0;
     bob.prevX = bob.x;
     bob.prevY = bob.y;
-  }
-
-  function positionHint() {
-    const size = charmSize();
-    const y = pivot.y + restLength - 20;
-    const top = Math.min(y, h - 300);
-    hintEl.style.top = Math.max(top, 90) + "px";
-    hintEl.style.transform = "translateX(-50%)";
   }
 
   function positionActions() {
@@ -223,7 +183,14 @@
         ay += (target.y - bob.y) * ROPE_STIFFNESS;
       } else {
         const sway = Math.sin(time * 0.9) * SWAY + Math.sin(time * 1.7 + 2) * SWAY * 0.4;
-        ax += sway * wobbleEnvelope();
+        let extra = 0;
+        if (jiggleFor > 0) {
+          jiggleFor -= h;
+          extra =
+            Math.sin(time * 26) * (jiggleFor / 3) * SWAY * 4 +
+            Math.sin(time * 11 + 1.3) * (jiggleFor / 3) * SWAY * 2;
+        }
+        ax += (sway + extra) * wobbleEnvelope();
       }
 
       bob.vx += ax * h;
@@ -461,49 +428,26 @@
     }
   }
 
-  function startQuotes() {
-    if (!quoteEl) return;
-    let i = 0;
-    quoteEl.textContent = QUOTES[0];
-    requestAnimationFrame(() => requestAnimationFrame(() => quoteEl.classList.add("show")));
-    if (reduceMotion) return;
-
-    const cycle = () => {
-      i = (i + 1) % QUOTES.length;
-      quoteEl.classList.remove("show");
-      setTimeout(() => {
-        quoteEl.textContent = QUOTES[i];
-        quoteEl.classList.add("show");
-      }, 700);
-    };
-    setInterval(cycle, 2200);
-  }
-
   function reveal() {
     if (revealed) return;
     revealed = true;
     document.body.classList.add("ready");
     const pre = document.getElementById("preloader");
     pre.classList.add("done");
-    setTimeout(() => pre && pre.remove(), 900);
+    setTimeout(() => pre && pre.remove(), 1000);
+    jiggleFor = reduceMotion ? 0 : 3;
     last = performance.now();
   }
 
   function start() {
     resize();
     pointers();
-    startQuotes();
-    bindPay();
     bindDownload();
     renderDownloadCount();
-    if (checkReturnStatus()) {
-      unlockDownload();
-      history.replaceState(null, "", window.location.pathname);
-    }
     last = performance.now();
     rafId = requestAnimationFrame(loop);
 
-    const minDelay = reduceMotion ? 250 : 1500;
+    const minDelay = 3000;
     const launch = () => {
       setTimeout(() => tryReveal(), 250);
     };
